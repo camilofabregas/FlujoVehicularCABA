@@ -10,4 +10,7 @@ Trabajo práctico N°1 de la materia Análisis Numérico I de la FIUBA
 * **Lucas Aisenberg** - [LAisenberg](Link al Github)
 * **Miguel Lederkremer** - [MLederkremer](Link al Github)
 
-Corrector: **<Corrector>** 
+Corrector: **<Corrector>**
+  
+## Informe
+Link al informe de Overleaf [aquí](https://es.overleaf.com/project/608b11cce9ea83467b762321)

@@ -1,6 +1,6 @@
 # Análisis Numérico I - Trabajo Práctico N°1
 
-Trabajo práctico N°1 de la materia Análisis Numérico de la FIUBA
+Trabajo práctico N°1 de la materia Análisis Numérico I de la FIUBA
 
 ## Grupo 17
 

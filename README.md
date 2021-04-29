@@ -5,7 +5,7 @@ Trabajo práctico N°1 de la materia Análisis Numérico I de la FIUBA
 ## Grupo 17
 
 * **Camilo Fábregas** - [CFabregas](https://github.com/MiloGNR)
-* **Ignacio Latorre** - [ILatorre](Link al Github)
+* **Ignacio Latorre** - [ILatorre](https://github.com/ilatorre7)
 * **Juan Pablo Fresia** - [JPFresia](Link al Github)
 * **Lucas Aisenberg** - [LAisenberg](Link al Github)
 * **Miguel Lederkremer** - [MLederkremer](Link al Github)

@@ -62,32 +62,78 @@ function estacion = mayorCantPasos(datos)
       estacion = j;
     endif
   endfor
-  
-  disp(pasosPorEstacion);
-  disp(estacion);
-  
+
 endfunction
 
+# Arma un ranking de estaciones con mas pasos segun el tipo de vehiculo.
+function estaciones = rankingEstacionesPorTipoVeh(datos, tipoVeh)
+  
+  estaciones = zeros(8,1);
+  
+  for i = 1:rows(datos)
+    if(datos(i,7) == tipoVeh) # Si el tipo de vehiculo coincide con el solicitado.
+      estaciones(datos(i,5)) += datos(i,9); # Acumula pasos de esa estacion
+    endif
+  endfor
+
+endfunction
+
+# Genera un balance de egresos/ingresos para cada dia de la semana de una estacion.
+function balance = balanceEstacionPorDiaSemana(datos, estacion)
+  
+  balance = zeros(7,2);
+  
+  for i = 1:rows(datos)
+    if (datos(i,5) == estacion)
+      if(datos(i,6) == 1) #Si es ingreso.
+        balance(datos(i,4),1) += datos(i,9);
+      else #Si es egreso.
+        balance(datos(i,4),2) += datos(i,9);
+      endif
+    endif
+  endfor
+  
+endfunction
 
 #------------------------------------------------------
 
 #Item b.
-figure(1);
-plot(0:23, balancePorHora(datos));
-title("Balances totales por hora.");
+#figure(1)
+#plot(0:23, balancePorHora(datos))
+#title("Balances totales por hora.")
 
 #Item c.
-figure(2);
-estacion = mayorCantPasos(datos);
-titulo = strcat("Balance de estación con mayor cantidad de pasos (", int2str(estacion), ")");
-plot(0:23, balanceEstacionPorHora(datos,estacion));
-title(titulo);
+#figure(2);
+#estacion = mayorCantPasos(datos)
+#titulo = strcat("Balance de estación con mayor cantidad de pasos (", int2str(estacion), ")");
+#plot(0:23, balanceEstacionPorHora(datos,estacion));
+#title(titulo);
 
 #Item d.
 
 #Item e.
+#rankingLivianos = rankingEstacionesPorTipoVeh(datos, 1); # 1 = Liviano
+#rankingPesados = rankingEstacionesPorTipoVeh(datos, 2); # 2 = Pesado
+#figure(4)
+#bar(1:8, rankingLivianos)
+#title("Ranking de estaciones por pasos de vehiculos livianos.")
+#figure(5)
+#bar(1:8, rankingPesados)
+#title("Ranking de estaciones por pasos de vehiculos pesados.")
+
 
 #Item f.
+#pasosEstacion1 = balanceEstacionPorDiaSemana(datos, 1)
+#pasosEstacion2 = balanceEstacionPorDiaSemana(datos, 2)
+#figure(6)
+#bar(1:7, pasosEstacion2)
+#title("Ingresos/egresos por dia en una estacion.")
+#pasosEstacion3 = balanceEstacionPorDiaSemana(datos, 3)
+#pasosEstacion4 = balanceEstacionPorDiaSemana(datos, 4)
+#pasosEstacion5 = balanceEstacionPorDiaSemana(datos, 5)
+#pasosEstacion6 = balanceEstacionPorDiaSemana(datos, 6)
+#pasosEstacion7 = balanceEstacionPorDiaSemana(datos, 7)
+#pasosEstacion8 = balanceEstacionPorDiaSemana(datos, 8)
 
 #Item g.
 

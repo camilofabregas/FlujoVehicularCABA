@@ -151,6 +151,23 @@ function balance = balanceEstacionPorDiaSemana(datos, estacion)
   
 endfunction
 
+# Genera un balance de egresos/ingresos para cada mes de una estacion.
+function balance = balanceEstacionPorMes(datos, estacion)
+  
+  balance = zeros(12,2);
+  
+  for i = 1:rows(datos)
+    if (datos(i,5) == estacion)
+      if(datos(i,6) == 1) #Si es ingreso.
+        balance(datos(i,1),1) += datos(i,9);
+      else #Si es egreso.
+        balance(datos(i,1),2) += datos(i,9);
+      endif
+    endif
+  endfor
+  
+endfunction
+
 # Recibe una tabla de datos y devuelve una matriz 24x4 con los pasos totales
 # por hora (filas) correspondientes a cada forma de pago (columnas).
 function pasSinCobrar = pasosSinCobrarPorHora (tabla)
@@ -236,19 +253,18 @@ bar(1:8, rankingPesados)
 title("Ranking de estaciones por pasos de vehiculos pesados.")
 
 #Item f.
-pasosEstacion1 = balanceEstacionPorDiaSemana(datos, 1);
-pasosEstacion2 = balanceEstacionPorDiaSemana(datos, 2);
+#Hacer graficos para las 8 estaciones. Dejo 1 a modo de ejemplo.
+pasosEstacion = balanceEstacionPorDiaSemana(datos, 2); # Estacion 2
 figure(8)
-bar(1:7, pasosEstacion2)
+bar(1:7, pasosEstacion)
 title("Ingresos/egresos por dia en una estacion.")
-pasosEstacion3 = balanceEstacionPorDiaSemana(datos, 3);
-pasosEstacion4 = balanceEstacionPorDiaSemana(datos, 4);
-pasosEstacion5 = balanceEstacionPorDiaSemana(datos, 5);
-pasosEstacion6 = balanceEstacionPorDiaSemana(datos, 6);
-pasosEstacion7 = balanceEstacionPorDiaSemana(datos, 7);
-pasosEstacion8 = balanceEstacionPorDiaSemana(datos, 8);
 
 #Item g.
+#Hacer graficos para las 8 estaciones. Dejo 1 a modo de ejemplo.
+pasosEstacion = balanceEstacionPorMes(datos, 2); # Estacion 2
+figure(8)
+bar(1:12, pasosEstacion)
+title("Ingresos/egresos por mes en una estacion.")
 
 #Item h.
 pasosSinCobrar = pasosSinCobrarPorHora(datos);

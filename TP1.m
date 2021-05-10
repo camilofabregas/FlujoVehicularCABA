@@ -69,6 +69,58 @@ function estacion = mayorCantPasos(datos)
   
 endfunction
 
+
+function movTotalPorHora = acumularMovilidadPorHora(datos)
+    movTotalPorHora = zeros(24,1);
+    
+    for i = 1:rows(datos)
+      movTotalPorHora(datos(i,3)+1) += datos(i,9);
+    endfor
+   
+    disp('Movilidad por hora');
+    disp(movTotalPorHora);
+    disp('Fin movilidad por hora');
+ 
+ endfunction
+ 
+
+#Son 22 franjas de 3 horas, la primera franja es desde las 0 hasta las 2, la segunda desde la 1 hasta las 3 y asi...
+function movilidadPorFranja = acumularMovilidadPorFranja(movilidadPorHora)
+   
+   movilidadPorFranja = zeros(22,2);
+   for i = 1: rows(movilidadPorFranja)
+     movilidadPorFranja(i,1) = i;
+     movilidadPorFranja(i,2) = movilidadPorHora(i) + movilidadPorHora(i+1) + movilidadPorHora(i+2);
+   endfor
+   
+   disp('Movilidad por franja');
+   disp(movilidadPorFranja);
+   disp('Fin movilidad por franja');
+   
+endfunction
+ 
+function franjasConMayorMovilidad = obtenerFranjasConMayorMovilidad(movilidadPorFranja)
+   franjasConMayorMovilidad = zeros(2,2);
+   
+   for i = 1:rows(movilidadPorFranja)
+     if (movilidadPorFranja(i,2) > franjasConMayorMovilidad(1,2))
+       franjasConMayorMovilidad(1,1) = movilidadPorFranja(i,1);
+       franjasConMayorMovilidad(1,2) = movilidadPorFranja(i,2);
+     endif
+   endfor
+   
+   for i = 1:rows(movilidadPorFranja)
+     if (movilidadPorFranja(i,2) > franjasConMayorMovilidad(2,2)) && (movilidadPorFranja(i,1) > (franjasConMayorMovilidad(1,1) + 3)) || (movilidadPorFranja(i,1) < (franjasConMayorMovilidad(1,1) - 3))
+       franjasConMayorMovilidad(2,1) = movilidadPorFranja(i,1);
+       franjasConMayorMovilidad(2,2) = movilidadPorFranja(i,2);
+     endif
+   endfor
+   
+   disp('Franjas con mayor movilidad');
+   disp(franjasConMayorMovilidad);
+   
+endfunction
+
 # Arma un ranking de estaciones con mas pasos segun el tipo de vehiculo.
 function estaciones = rankingEstacionesPorTipoVeh(datos, tipoVeh)
   
@@ -152,7 +204,7 @@ plot(0:23, pasosPorHora(datos)(:,1) - pasosPorHora(datos)(:,2), 'o-k');
 title("Balances totales por hora.");
 xticks(0:23);
 xlabel("Horas");
-ylabel("Balances");
+ylabel("Balance");
 
 #Item c.
 figure(4);
@@ -162,25 +214,31 @@ plot(0:23, balanceEstacionPorHora(datos,estacion), 'o-k');
 title(titulo);
 xticks(0:23);
 xlabel("Horas");
-ylabel("Balances");
+ylabel("Balance");
 
 #Item d.
+figure(5)
+plot(0:23, acumularMovilidadPorHora(datos),'--o');
+title('Movilidad total por hora');
+xticks(0:23);
+xlabel("Horas");
+ylabel("Movilidad");
+obtenerFranjasConMayorMovilidad(acumularMovilidadPorFranja(acumularMovilidadPorHora(datos)));
 
 #Item e.
 rankingLivianos = rankingEstacionesPorTipoVeh(datos, 1); # 1 = Liviano
 rankingPesados = rankingEstacionesPorTipoVeh(datos, 2); # 2 = Pesado
-figure(5)
+figure(6)
 bar(1:8, rankingLivianos)
 title("Ranking de estaciones por pasos de vehiculos livianos.")
-figure(6)
+figure(7)
 bar(1:8, rankingPesados)
 title("Ranking de estaciones por pasos de vehiculos pesados.")
-
 
 #Item f.
 pasosEstacion1 = balanceEstacionPorDiaSemana(datos, 1);
 pasosEstacion2 = balanceEstacionPorDiaSemana(datos, 2);
-figure(7)
+figure(8)
 bar(1:7, pasosEstacion2)
 title("Ingresos/egresos por dia en una estacion.")
 pasosEstacion3 = balanceEstacionPorDiaSemana(datos, 3);
@@ -195,7 +253,7 @@ pasosEstacion8 = balanceEstacionPorDiaSemana(datos, 8);
 #Item h.
 pasosSinCobrar = pasosSinCobrarPorHora(datos);
 pasosSCTotales = pasosSinCobrar(:,1) + pasosSinCobrar(:,2) + pasosSinCobrar(:,3) + pasosSinCobrar(:,4);
-figure(8)
+figure(9)
 hold on
 plot(0:23, pasosSinCobrar(:,1), 'o-m;Exento;');
 plot(0:23, pasosSinCobrar(:,2), 'x-b;Infraccion;');
@@ -205,7 +263,7 @@ xticks(0:23);
 xlabel("Horas");
 ylabel("Pasos");
 
-figure(9)
+figure(10)
 plot(0:23, pasosSCTotales, 'v-k;Total sin cobrabilidad;');
 xticks(0:23);
 xlabel("Horas");

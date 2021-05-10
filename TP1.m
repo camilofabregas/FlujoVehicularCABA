@@ -199,7 +199,57 @@ function pasosSinCobrar = acumularPasosSinCobrarPorHora(fila,pasSinCobrar)
   
 endfunction
 
+#Formas de pago para cada dia del año
+function pagos = pagosPorDia(datos)
+  
+  pagos = zeros(365,2); #1era columna 'Efectivo', 2da columna 'Telepase'
+  
+  for i=1:rows(datos)
+  x = diasHastaMes(datos(i,1)) + datos(i,2);
+  if(datos(i,8) == 101)
+    pagos(x,1) += datos(i,9);
+    else
+    pagos(x,2) += datos(i,9);
+  endif
+  endfor
+
+endfunction
+
+#Devuelve la cantidad de dias hasta el mes dado
+function dias = diasHastaMes(mes)
+  
+  switch(mes)
+   case 1
+     dias = 0;
+   case 2
+     dias = 31;
+   case 3
+     dias = 59;
+   case 4
+     dias = 90;
+   case 5
+     dias = 120;
+   case 6
+     dias = 151;
+   case 7
+     dias = 181;
+   case 8
+     dias = 212;
+   case 9
+     dias = 243;
+   case 10
+     dias = 273;
+   case 11
+     dias = 304;
+   case 12
+     dias = 334;
+  endswitch
+  
+endfunction
+
 #------------------------------------------------------
+
+#GRAFICOS
 
 #Item b.
 figure(1);
@@ -218,7 +268,7 @@ ylabel("Egresos");
 
 figure(3);
 plot(0:23, pasosPorHora(datos)(:,1) - pasosPorHora(datos)(:,2), 'o-k');
-title("Balances totales por hora.");
+title("Balance total por hora.");
 xticks(0:23);
 xlabel("Horas");
 ylabel("Balance");
@@ -262,14 +312,14 @@ title("Ingresos/egresos por dia en una estacion.")
 #Item g.
 #Hacer graficos para las 8 estaciones. Dejo 1 a modo de ejemplo.
 pasosEstacion = balanceEstacionPorMes(datos, 2); # Estacion 2
-figure(8)
+figure(9)
 bar(1:12, pasosEstacion)
 title("Ingresos/egresos por mes en una estacion.")
 
 #Item h.
 pasosSinCobrar = pasosSinCobrarPorHora(datos);
 pasosSCTotales = pasosSinCobrar(:,1) + pasosSinCobrar(:,2) + pasosSinCobrar(:,3) + pasosSinCobrar(:,4);
-figure(9)
+figure(10)
 hold on
 plot(0:23, pasosSinCobrar(:,1), 'o-m;Exento;');
 plot(0:23, pasosSinCobrar(:,2), 'x-b;Infraccion;');
@@ -279,13 +329,18 @@ xticks(0:23);
 xlabel("Horas");
 ylabel("Pasos");
 
-figure(10)
+figure(11)
 plot(0:23, pasosSCTotales, 'v-k;Total sin cobrabilidad;');
 xticks(0:23);
 xlabel("Horas");
 ylabel("Pasos");
 
 #Item i.
+figure(12)
+pagos = pagosPorDia(datos);
+plot((1:365),pagos(:,1),'.-r;Efectivo;',(1:365),pagos(:,2),'.-b;Telepase;');
+xlabel("Días de 2019");
+ylabel("Pagos");
 
 #------------------------------------------------------
 

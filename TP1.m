@@ -99,6 +99,37 @@ function balance = balanceEstacionPorDiaSemana(datos, estacion)
   
 endfunction
 
+# Recibe una tabla de datos y devuelve una matriz 24x4 con los pasos totales
+# por hora (filas) correspondientes a cada forma de pago (columnas).
+function pasSinCobrar = pasosSinCobrarPorHora (tabla)
+  
+  pasSinCobrar = zeros(24,4);
+  
+  for i = 1:rows(tabla)
+    pasSinCobrar = acumularPasosSinCobrarPorHora(tabla(i,:),pasSinCobrar);
+  endfor
+  
+  
+endfunction
+
+# Acumula pasos por hora sin cobrabilidad en una matriz 24x4 y la devuelve.
+function pasosSinCobrar = acumularPasosSinCobrarPorHora(fila,pasSinCobrar)
+  
+  pasosSinCobrar = pasSinCobrar;
+  
+  switch(fila(8))
+    case 102
+      pasosSinCobrar(fila(3)+1, 1) += fila(9);
+    case 103
+      pasosSinCobrar(fila(3)+1, 2) += fila(9);
+    case 104
+      pasosSinCobrar(fila(3)+1, 3) += fila(9);
+    case 105
+      pasosSinCobrar(fila(3)+1, 4) += fila(9);
+  endswitch
+  
+endfunction
+
 #------------------------------------------------------
 
 #Item b.
@@ -107,18 +138,21 @@ plot(0:23, pasosPorHora(datos)(:,1), 'o-b');
 title("Ingresos totales por hora.");
 xticks(0:23);
 xlabel("Horas");
+ylabel("Ingresos");
 
 figure(2);
 plot(0:23, pasosPorHora(datos)(:,2), 'o-r');
 title("Egresos totales por hora.");
 xticks(0:23);
 xlabel("Horas");
+ylabel("Egresos");
 
 figure(3);
 plot(0:23, pasosPorHora(datos)(:,1) - pasosPorHora(datos)(:,2), 'o-k');
 title("Balances totales por hora.");
 xticks(0:23);
 xlabel("Horas");
+ylabel("Balances");
 
 #Item c.
 figure(4);
@@ -128,6 +162,7 @@ plot(0:23, balanceEstacionPorHora(datos,estacion), 'o-k');
 title(titulo);
 xticks(0:23);
 xlabel("Horas");
+ylabel("Balances");
 
 #Item d.
 
@@ -143,21 +178,38 @@ title("Ranking de estaciones por pasos de vehiculos pesados.")
 
 
 #Item f.
-pasosEstacion1 = balanceEstacionPorDiaSemana(datos, 1)
-pasosEstacion2 = balanceEstacionPorDiaSemana(datos, 2)
+pasosEstacion1 = balanceEstacionPorDiaSemana(datos, 1);
+pasosEstacion2 = balanceEstacionPorDiaSemana(datos, 2);
 figure(7)
 bar(1:7, pasosEstacion2)
 title("Ingresos/egresos por dia en una estacion.")
-pasosEstacion3 = balanceEstacionPorDiaSemana(datos, 3)
-pasosEstacion4 = balanceEstacionPorDiaSemana(datos, 4)
-pasosEstacion5 = balanceEstacionPorDiaSemana(datos, 5)
-pasosEstacion6 = balanceEstacionPorDiaSemana(datos, 6)
-pasosEstacion7 = balanceEstacionPorDiaSemana(datos, 7)
-pasosEstacion8 = balanceEstacionPorDiaSemana(datos, 8)
+pasosEstacion3 = balanceEstacionPorDiaSemana(datos, 3);
+pasosEstacion4 = balanceEstacionPorDiaSemana(datos, 4);
+pasosEstacion5 = balanceEstacionPorDiaSemana(datos, 5);
+pasosEstacion6 = balanceEstacionPorDiaSemana(datos, 6);
+pasosEstacion7 = balanceEstacionPorDiaSemana(datos, 7);
+pasosEstacion8 = balanceEstacionPorDiaSemana(datos, 8);
 
 #Item g.
 
 #Item h.
+pasosSinCobrar = pasosSinCobrarPorHora(datos);
+pasosSCTotales = pasosSinCobrar(:,1) + pasosSinCobrar(:,2) + pasosSinCobrar(:,3) + pasosSinCobrar(:,4);
+figure(8)
+hold on
+plot(0:23, pasosSinCobrar(:,1), 'o-m;Exento;');
+plot(0:23, pasosSinCobrar(:,2), 'x-b;Infraccion;');
+plot(0:23, pasosSinCobrar(:,3), 's-r;No cobrado;');
+plot(0:23, pasosSinCobrar(:,4), 'd-g;T. Discapacidad;');
+xticks(0:23);
+xlabel("Horas");
+ylabel("Pasos");
+
+figure(9)
+plot(0:23, pasosSCTotales, 'v-k;Total sin cobrabilidad;');
+xticks(0:23);
+xlabel("Horas");
+ylabel("Pasos");
 
 #Item i.
 

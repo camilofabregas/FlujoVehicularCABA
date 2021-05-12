@@ -154,18 +154,44 @@ endfunction
 # Arma un ranking de estaciones con más pasos segun el tipo de vehículo.
 # PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019. Número
 # indicando el tipo de vehículo (1: liviano, 2: pesado).
-# POST: Devuelve un vector de 8 posiciones con los pasos totales para cada 
-# estación del tipo de vehículo otorgado.
+# POST: Devuelve una matriz de 8 filas con número de estación en la primer
+# columna, y pasos totales del tipo de vehículo otorgado en la segunda.
 function estaciones = rankingEstacionesPorTipoVeh(datos, tipoVeh)
   
-  estaciones = zeros(8,1);
+  estaciones = [1,0; 2,0; 3,0; 4,0; 5,0; 6,0; 7,0; 8,0];
   
   for i = 1:rows(datos)
     if(datos(i,7) == tipoVeh) # Si el tipo de vehiculo coincide con el solicitado.
-      estaciones(datos(i,5)) += datos(i,9); # Acumula pasos de esa estacion
+      estaciones(datos(i,5),2) += datos(i,9); # Acumula pasos de esa estacion
     endif
   endfor
+  
+  estaciones = ordenarRankingEstaciones(estaciones);
+  
+  disp("Ranking ordenado");
+  disp(estaciones);
 
+endfunction
+
+# Ordena de mayor a menor un ranking de estaciones según pasos en cada una.
+# PRE: Matriz de 8 filas con número de estación en la primer
+# columna, y pasos totales del tipo de vehículo otorgado en la segunda.
+# POST: Devuelve la misma matriz recibida pero con filas ordenadas de mayor a
+# menor respecto a pasos en cada estación.
+function estacionesOrd = ordenarRankingEstaciones(estaciones)
+  
+  estacionesOrd = estaciones;
+  
+  for i=flip(1:7)
+    for j=1:i
+      if (estacionesOrd(j,2) < estacionesOrd(j+1,2))
+        filaAux = estacionesOrd(j+1,:);
+        estacionesOrd(j+1,:) = estacionesOrd(j,:);
+        estacionesOrd(j,:) = filaAux;
+      endif
+    endfor
+  endfor
+  
 endfunction
 
 # Genera un balance de egresos/ingresos para cada dia de la semana de una estación.
@@ -361,18 +387,21 @@ function imprimirGraficoPorHora(figura, titulo, etiquetaY, nombreArchivo)
 endfunction
 
 # Imprime ranking de estaciones.
-# PRE: Figura a imprimir, título del gráfico y nombre del archivo a donde se 
-# guardará la imagen.
+# PRE: Figura a imprimir, ranking de estaciones de mayor a menor, título del  
+# gráfico y nombre del archivo a donde se guardará la imagen.
 # POST: Imprime la figura representando en un gráfico de barras los valores
 # correspondientes a cada estación. Guarda la imagen en un archivo.
-function imprimirRankingEstaciones(figura, titulo, nombreArchivo)
+function imprimirRankingEstaciones(figura, ranking, titulo, nombreArchivo)
   
   title(strcat("Ranking de estaciones por pasos de", {' '}, titulo, "."));
   grid on
   ytick = get (gca, "ytick");
   yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
   set (gca, "yticklabel", yticklabel);
-  estaciones = {"Alberti","Avellaneda","Dellepiane","Illia","Paseo del Bajo","Retiro","Salguero","Sarmiento"};
+  estaciones = {};
+  for i=1:8
+    estaciones(i) = nombreEstacion(ranking(i));
+  endfor
   set (gca,'xticklabel', estaciones);
   ylabel(strcat("Pasos de", titulo));
   print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S800,500");
@@ -475,10 +504,10 @@ obtenerFranjasConMayorMovilidad(acumularMovilidadPorFranja(acumularMovilidadPorH
 #pesados.
 rankingLivianos = rankingEstacionesPorTipoVeh(datos, 1); # 1 = Liviano
 rankingPesados = rankingEstacionesPorTipoVeh(datos, 2); # 2 = Pesado
-bar(1:8, rankingLivianos);
-imprimirRankingEstaciones(fig, "vehiculos livianos", "iteme1");
-bar(1:8, rankingPesados);
-imprimirRankingEstaciones(fig, "vehiculos pesados", "iteme2");
+bar(1:8, rankingLivianos(:,2));
+imprimirRankingEstaciones(fig, rankingLivianos(:,1), "vehiculos livianos", "iteme1");
+bar(1:8, rankingPesados(:,2));
+imprimirRankingEstaciones(fig, rankingPesados(:,1), "vehiculos pesados", "iteme2");
 
 
 #Item f: Gráficos de ingresos y egresos por día de semana para cada estación.
@@ -523,13 +552,7 @@ imprimirGraficoPorDias(fig, "Forma de pago por día del año.", "Pagos", "itemi");
 
  
  
- 
- 
- 
- 
- 
- 
- 
+
  
  
  

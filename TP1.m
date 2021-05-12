@@ -1,14 +1,19 @@
 # Trabajo Práctico 1 - Grupo 17 - Modelación Númerica - 1er cuatrimestre 2021
 
-#Item a.
+#Item a: se vuelca el contenido del archivo en una tabla matriz de 9 columnas
+#correspondientes a: Mes, Dia, Hora, DiaSemana, Estación, Sentido, TipoVehículo, 
+#FormaPago y CantidadPasos.
 datos = load('FlujoVehicular2019.dat'); # Lee el conjunto de datos del archivo.
 
 #------------------------------------------------------
 
-#FUNCIONES
+#FUNCIONES LOGICAS
 
 # Recibe una tabla de datos y devuelve una matriz con ingresos y egresos
 # totales por hora.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019.
+# POST: Devuelve una matriz de 24 filas (que representan las horas) y 2 columnas
+# (la primera de ingresos y la segunda de egresos).
 function pasPorHora = pasosPorHora(tabla)
   
   pasPorHora = zeros(24,2);
@@ -21,6 +26,10 @@ endfunction
 
 # Recibe una tabla de datos y calcula el balance para cada hora en una
 # estación específica.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019. Número
+# indicador de estación de peaje entre 1 y 8.
+# POST: Devuelve un vector de 24 posiciones con los balances por hora para la
+# estación recibida.
 function balPorHora = balanceEstacionPorHora(tabla,estacion)
   
   pasPorHora = zeros(24,2);
@@ -37,6 +46,10 @@ function balPorHora = balanceEstacionPorHora(tabla,estacion)
 endfunction
 
 # Acumula pasos por hora en una matriz y la devuelve.
+# PRE: Vector fila de 9 posiciones con datos del flujo vehicular 2019. Matriz
+# 'pasos por hora' que contiene los ingresos y egresos acumulados anteriormente.
+# POST: Devuelve una matriz de 24x2 con los ingresos y egresos acumulados en
+# sus respectivas columnas.
 function pasosPorHora = acumularPasosPorHora(fila,pasPorHora)
   
   pasosPorHora = pasPorHora;
@@ -50,6 +63,9 @@ function pasosPorHora = acumularPasosPorHora(fila,pasPorHora)
 endfunction
 
 # Busca y devuelve la estación de peaje con mayor cantidad de pasos totales.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019.
+# POST: Devuelve un número entre 1 y 8 correspondiente a la estación con
+# mayor cantidad de pasos totales.
 function estacion = mayorCantPasos(datos)
   
   pasosPorEstacion = zeros(8,1);
@@ -69,7 +85,10 @@ function estacion = mayorCantPasos(datos)
   
 endfunction
 
-
+# Acumula en un vector la movilidad total para cada hora y lo devuelve.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019.
+# POST: Devuelve un vector de 24 posiciones con las movilidades correspondientes
+# a cada hora.
 function movTotalPorHora = acumularMovilidadPorHora(datos)
     movTotalPorHora = zeros(24,1);
     
@@ -83,8 +102,13 @@ function movTotalPorHora = acumularMovilidadPorHora(datos)
  
  endfunction
  
-
-#Son 22 franjas de 3 horas, la primera franja es desde las 0 hasta las 2, la segunda desde la 1 hasta las 3 y asi...
+# Acumula en una matriz las movilidades correspondientes a cada franja horaria
+# y la devuelve. Son 22 franjas de 3 horas, la primera franja es desde las 0
+# hasta las 2, la segunda desde la 1 hasta las 3 y asi...
+# PRE: Vector de 24 posiciones con las movilidades correspondientes
+# a cada hora.
+# POST: Devuelve matriz de 22 filas (franjas), con el número de franja en la
+# primera columna y la movilidad acumulada de la misma en la segunda.
 function movilidadPorFranja = acumularMovilidadPorFranja(movilidadPorHora)
    
    movilidadPorFranja = zeros(22,2);
@@ -99,6 +123,12 @@ function movilidadPorFranja = acumularMovilidadPorFranja(movilidadPorHora)
    
 endfunction
  
+# Recibe una matriz de movilidades por franja, busca las dos franjas de mayor
+# movilidad y las devuelve.
+# PRE: Matriz de 22 filas (franjas), con el número de franja en la
+# primera columna y la movilidad acumulada de la misma en la segunda.
+# POST: Devuelve una matriz 2x2 con las dos filas de mayor movilidad y sus
+# respectivas cantidades de pasos totales.
 function franjasConMayorMovilidad = obtenerFranjasConMayorMovilidad(movilidadPorFranja)
    franjasConMayorMovilidad = zeros(2,2);
    
@@ -121,7 +151,11 @@ function franjasConMayorMovilidad = obtenerFranjasConMayorMovilidad(movilidadPor
    
 endfunction
 
-# Arma un ranking de estaciones con mas pasos segun el tipo de vehiculo.
+# Arma un ranking de estaciones con más pasos segun el tipo de vehículo.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019. Número
+# indicando el tipo de vehículo (1: liviano, 2: pesado).
+# POST: Devuelve un vector de 8 posiciones con los pasos totales para cada 
+# estación del tipo de vehículo otorgado.
 function estaciones = rankingEstacionesPorTipoVeh(datos, tipoVeh)
   
   estaciones = zeros(8,1);
@@ -134,7 +168,11 @@ function estaciones = rankingEstacionesPorTipoVeh(datos, tipoVeh)
 
 endfunction
 
-# Genera un balance de egresos/ingresos para cada dia de la semana de una estacion.
+# Genera un balance de egresos/ingresos para cada dia de la semana de una estación.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019. Número
+# indicador de estación de peaje entre 1 y 8.
+# POST: Devuelve una matriz de 7 filas (días de la semana) y 2 columnas, con los
+# ingresos de la estación recibida en la primera y los egresos en la segunda.
 function balance = balanceEstacionPorDiaSemana(datos, estacion)
   
   balance = zeros(7,2);
@@ -149,9 +187,16 @@ function balance = balanceEstacionPorDiaSemana(datos, estacion)
     endif
   endfor
   
+  disp(nombreEstacion(estacion));
+  disp(balance);
+  
 endfunction
 
-# Genera un balance de egresos/ingresos para cada mes de una estacion.
+# Genera un balance de egresos/ingresos para cada mes de una estación.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019. Número
+# indicador de estación de peaje entre 1 y 8.
+# POST: Devuelve una matriz de 12 filas (meses) y 2 columnas, con los ingresos
+# de la estación dada en la primera y los egresos en la segunda.
 function balance = balanceEstacionPorMes(datos, estacion)
   
   balance = zeros(12,2);
@@ -166,10 +211,16 @@ function balance = balanceEstacionPorMes(datos, estacion)
     endif
   endfor
   
+  disp(nombreEstacion(estacion));
+  disp(balance);
+  
 endfunction
 
-# Recibe una tabla de datos y devuelve una matriz 24x4 con los pasos totales
-# por hora (filas) correspondientes a cada forma de pago (columnas).
+# Cuenta y clasifica por hora los pasos totales que caen en las diferentes 
+# situaciones de no cobrabilidad.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019.
+# POST: Devuelve matriz 24x4 con los pasos totales por hora (filas) 
+# correspondientes a cada forma de pago (columnas).
 function pasSinCobrar = pasosSinCobrarPorHora (tabla)
   
   pasSinCobrar = zeros(24,4);
@@ -181,7 +232,11 @@ function pasSinCobrar = pasosSinCobrarPorHora (tabla)
   
 endfunction
 
-# Acumula pasos por hora sin cobrabilidad en una matriz 24x4 y la devuelve.
+# Acumula pasos por hora sin cobrabilidad en una matriz y la devuelve.
+# PRE: Vector fila de 9 posiciones con datos del flujo vehicular 2019. Matriz
+# 'pasos por hora sin cobrar' de 24 filas (horas) por 4 columnas (situaciones
+# de no cobrabilidad).
+# POST: Devuelve matriz 24x4 con los pasos sin cobrabilidad acumulados por hora.
 function pasosSinCobrar = acumularPasosSinCobrarPorHora(fila,pasSinCobrar)
   
   pasosSinCobrar = pasSinCobrar;
@@ -199,7 +254,10 @@ function pasosSinCobrar = acumularPasosSinCobrarPorHora(fila,pasSinCobrar)
   
 endfunction
 
-#Formas de pago para cada dia del año
+# Formas de pago para cada día del año.
+# PRE: Tabla de n filas y 9 columnas con datos del flujo vehicular 2019.
+# POST: Devuelve matriz con 365 filas (días del año) y 2 columnas (pagos en
+# efectivo y pagos con Telepase).
 function pagos = pagosPorDia(datos)
   
   pagos = zeros(365,2); #1era columna 'Efectivo', 2da columna 'Telepase'
@@ -215,7 +273,10 @@ function pagos = pagosPorDia(datos)
 
 endfunction
 
-#Devuelve la cantidad de dias hasta el mes dado
+# Devuelve la cantidad de dias hasta el mes dado.
+# PRE: Número del 1 al 12 que indica el mes.
+# POST: Devuelve un número mayor o igual a 0 correspondiente a la cantidad
+# de días del año hasta el mes recibido.
 function dias = diasHastaMes(mes)
   
   switch(mes)
@@ -249,98 +310,214 @@ endfunction
 
 #------------------------------------------------------
 
+#FUNCIONES PARA GRAFICOS
+
+# Nombre de las estaciones.
+# PRE: Número entre 1 y 8 correspondiente a la estación.
+# POST: Devuelve el nombre de la estación recibida. 
+function estacion = nombreEstacion(numeroEstacion)
+  
+  switch(numeroEstacion)
+   case 1
+     estacion = "Alberti";
+   case 2
+     estacion = "Avellaneda";
+   case 3
+     estacion = "Dellepiane";
+   case 4
+     estacion = "Illia";
+   case 5
+     estacion = "Paseo del Bajo";
+   case 6
+     estacion = "Retiro";
+   case 7
+     estacion = "Salguero";
+   case 8
+     estacion = "Sarmiento";
+  endswitch
+  
+endfunction
+
+# Imprime gráfico por horas.
+# PRE: Figura a imprimir, título del gráfico, etiqueta del eje Y y nombre del
+# archivo a donde se guardará la imagen.
+# POST: Imprime la figura ajustando el eje X entre las 0 y 24 horas. Guarda 
+# la imagen en un archivo.
+function imprimirGraficoPorHora(figura, titulo, etiquetaY, nombreArchivo)
+  
+  title(titulo);
+  grid on
+  xticks(0:23);
+  xtick = get (gca, "xtick");
+  xticklabel = strsplit (sprintf ("%dh\n", xtick), "\n", true);
+  set (gca, "xticklabel", xticklabel);
+  ytick = get (gca, "ytick");
+  yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
+  set (gca, "yticklabel", yticklabel);
+  xlabel("Horas");
+  ylabel(etiquetaY);
+  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S800,500");
+  
+endfunction
+
+# Imprime ranking de estaciones.
+# PRE: Figura a imprimir, título del gráfico y nombre del archivo a donde se 
+# guardará la imagen.
+# POST: Imprime la figura representando en un gráfico de barras los valores
+# correspondientes a cada estación. Guarda la imagen en un archivo.
+function imprimirRankingEstaciones(figura, titulo, nombreArchivo)
+  
+  title(strcat("Ranking de estaciones por pasos de", {' '}, titulo, "."));
+  grid on
+  ytick = get (gca, "ytick");
+  yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
+  set (gca, "yticklabel", yticklabel);
+  estaciones = {"Alberti","Avellaneda","Dellepiane","Illia","Paseo del Bajo","Retiro","Salguero","Sarmiento"};
+  set (gca,'xticklabel', estaciones);
+  ylabel(strcat("Pasos de", titulo));
+  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S800,500");
+  
+endfunction
+
+# Imprime gráfico de ingresos/egresos por día de semana.
+# PRE: Figura a imprimir, gráfico de la figura, título del gráfico, etiqueta 
+# del eje Y y nombre del archivo a donde se guardará la imagen.
+# POST: Imprime la figura representando en un gráfico de barras los ingresos y
+# egresos correspondientes a cada día de la semana. Guarda la imagen en un archivo.
+function imprimirGraficoPorDiaSemana(figura, grafico, titulo, etiquetaY, nombreArchivo)
+  
+  title(titulo);
+  grid on
+  ylim([0, 4000000]);
+  ytick = get (gca, "ytick");
+  yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
+  set (gca, "yticklabel", yticklabel);
+  diasSemana = {"Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"};
+  set (gca,'xticklabel', diasSemana);
+  ylabel(etiquetaY);
+  legend(grafico,'Ingresos','Egresos');
+  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
+  
+endfunction
+
+# Imprime gráfico de ingresos/egresos por mes.
+# PRE: Figura a imprimir, gráfico de la figura, título del gráfico, etiqueta 
+# del eje Y y nombre del archivo a donde se guardará la imagen.
+# POST: Imprime la figura representando en un gráfico de barras los ingresos y
+# egresos correspondientes a cada mes. Guarda la imagen en un archivo.
+function imprimirGraficoPorMes(figura, grafico, titulo, etiquetaY, nombreArchivo)
+  
+  title(titulo);
+  grid on
+  ylim([0, 2500000]);
+  ytick = get (gca, "ytick");
+  yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
+  set (gca, "yticklabel", yticklabel);
+  meses = {"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"};
+  set (gca,'xticklabel', meses);
+  ylabel(etiquetaY);
+  legend(grafico,'Ingresos','Egresos');
+  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
+  
+endfunction
+
+# Imprime gráfico de formas de pago en cada día del año 2019.
+# PRE: Figura a imprimir, título del gráfico, etiqueta del eje Y y nombre del 
+# archivo a donde se guardará la imagen.
+# POST: Imprime la figura representando en un gráfico las formas de pago 
+# (efectivo y Telepase) para cada día del año 2019. Guarda la imagen en un
+# archivo.
+function imprimirGraficoPorDias(figura, titulo, etiquetaY, nombreArchivo)
+  
+  title(titulo);
+  grid on
+  xticks(0:50:365);
+  ytick = get (gca, "ytick");
+  yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
+  set (gca, "yticklabel", yticklabel);
+  xlabel("Días de 2019");
+  ylabel(etiquetaY);
+  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
+  
+endfunction
+
+#------------------------------------------------------
+
 #GRAFICOS
 
-#Item b.
-figure(1);
-plot(0:23, pasosPorHora(datos)(:,1), 'o-b');
-title("Ingresos totales por hora.");
-xticks(0:23);
-xlabel("Horas");
-ylabel("Ingresos");
+fig = figure;
 
-figure(2);
-plot(0:23, pasosPorHora(datos)(:,2), 'o-r');
-title("Egresos totales por hora.");
-xticks(0:23);
-xlabel("Horas");
-ylabel("Egresos");
+#Item b: Gráficos de ingresos, egresos y balances totales para cada hora.
+plot(0:23, pasosPorHora(datos)(:,1), 'o-b;Todos los días;');
+imprimirGraficoPorHora(fig, "Ingresos totales por hora", "Ingresos", "itemb1");
+plot(0:23, pasosPorHora(datos)(:,2), 'o-r;Todos los días;');
+imprimirGraficoPorHora(fig, "Egresos totales por hora", "Egresos", "itemb2");
+plot(0:23, pasosPorHora(datos)(:,1) - pasosPorHora(datos)(:,2), 'o-k;Todos los días;');
+imprimirGraficoPorHora(fig, "Balances totales por hora", "Balance", "itemb3");
 
-figure(3);
-plot(0:23, pasosPorHora(datos)(:,1) - pasosPorHora(datos)(:,2), 'o-k');
-title("Balance total por hora.");
-xticks(0:23);
-xlabel("Horas");
-ylabel("Balance");
 
-#Item c.
-figure(4);
+#Item c: Gráfico de balances totales por hora para estación con mayor movilidad.
 estacion = mayorCantPasos(datos);
-titulo = strcat("Balance de estación con mayor cantidad de pasos (", int2str(estacion), ")");
-plot(0:23, balanceEstacionPorHora(datos,estacion), 'o-k');
-title(titulo);
-xticks(0:23);
-xlabel("Horas");
-ylabel("Balance");
+titulo = strcat("Balances de estación con mayor cantidad de pasos (", nombreEstacion(estacion), ")");
+plot(0:23, balanceEstacionPorHora(datos,estacion), 'o-k;Todos los días;');
+imprimirGraficoPorHora(fig, titulo, "Balance", "itemc");
 
-#Item d.
-figure(5)
-plot(0:23, acumularMovilidadPorHora(datos),'--o');
+
+#Item d: Gráfico de movilidad total para cada hora y análisis de las franjas
+#horarias con mayor cantidad de pasos.
+plot(0:23, acumularMovilidadPorHora(datos),'--o;Todos los días;');
 title('Movilidad total por hora');
-xticks(0:23);
-xlabel("Horas");
-ylabel("Movilidad");
+imprimirGraficoPorHora(fig, "Movilidad total por hora", "Movilidad", "itemd");
 obtenerFranjasConMayorMovilidad(acumularMovilidadPorFranja(acumularMovilidadPorHora(datos)));
 
-#Item e.
+
+#Item e: Gráficos de rankings de pasos en estaciones para vehículos livianos y
+#pesados.
 rankingLivianos = rankingEstacionesPorTipoVeh(datos, 1); # 1 = Liviano
 rankingPesados = rankingEstacionesPorTipoVeh(datos, 2); # 2 = Pesado
-figure(6)
-bar(1:8, rankingLivianos)
-title("Ranking de estaciones por pasos de vehiculos livianos.")
-figure(7)
-bar(1:8, rankingPesados)
-title("Ranking de estaciones por pasos de vehiculos pesados.")
+bar(1:8, rankingLivianos);
+imprimirRankingEstaciones(fig, "vehiculos livianos", "iteme1");
+bar(1:8, rankingPesados);
+imprimirRankingEstaciones(fig, "vehiculos pesados", "iteme2");
 
-#Item f.
-#Hacer graficos para las 8 estaciones. Dejo 1 a modo de ejemplo.
-pasosEstacion = balanceEstacionPorDiaSemana(datos, 2); # Estacion 2
-figure(8)
-bar(1:7, pasosEstacion)
-title("Ingresos/egresos por dia en una estacion.")
 
-#Item g.
-#Hacer graficos para las 8 estaciones. Dejo 1 a modo de ejemplo.
-pasosEstacion = balanceEstacionPorMes(datos, 2); # Estacion 2
-figure(9)
-bar(1:12, pasosEstacion)
-title("Ingresos/egresos por mes en una estacion.")
+#Item f: Gráficos de ingresos y egresos por día de semana para cada estación.
+for i=1:8
+  pasosEstacion = balanceEstacionPorDiaSemana(datos, i);
+  barras = bar(1:7, pasosEstacion);
+  titulo = strcat("Ingresos/egresos por dia en estación ", {' '}, nombreEstacion(i), ".");
+  imprimirGraficoPorDiaSemana(fig, barras, titulo, "Pasos", strcat("itemf",int2str(i)));
+endfor
 
-#Item h.
+
+#Item g: Gráficos de ingresos y egresos por mes para cada estación.
+for i=1:8
+  pasosEstacion = balanceEstacionPorMes(datos, i);
+  barras = bar(1:12, pasosEstacion);
+  titulo = strcat("Ingresos/egresos por mes en estación", {' '}, nombreEstacion(i), ".");
+  imprimirGraficoPorMes(fig, barras, titulo, "Pasos", strcat("itemg",int2str(i)));
+endfor
+
+
+#Item h: Gráficos de pasos totales según forma de condición de no cobrabilidad.
 pasosSinCobrar = pasosSinCobrarPorHora(datos);
 pasosSCTotales = pasosSinCobrar(:,1) + pasosSinCobrar(:,2) + pasosSinCobrar(:,3) + pasosSinCobrar(:,4);
-figure(10)
+clf(fig)
 hold on
 plot(0:23, pasosSinCobrar(:,1), 'o-m;Exento;');
 plot(0:23, pasosSinCobrar(:,2), 'x-b;Infraccion;');
 plot(0:23, pasosSinCobrar(:,3), 's-r;No cobrado;');
 plot(0:23, pasosSinCobrar(:,4), 'd-g;T. Discapacidad;');
-xticks(0:23);
-xlabel("Horas");
-ylabel("Pasos");
-
-figure(11)
+imprimirGraficoPorHora(fig, "Pasos sin cobrabilidad por hora.", "Pasos", "itemh1");
+hold off
 plot(0:23, pasosSCTotales, 'v-k;Total sin cobrabilidad;');
-xticks(0:23);
-xlabel("Horas");
-ylabel("Pasos");
+imprimirGraficoPorHora(fig, "Pasos totales sin cobrabilidad por hora.", "Pasos", "itemh2");
 
-#Item i.
-figure(12)
+
+#Item i: Gráficos de formas de pago para todos los días del año 2019.
 pagos = pagosPorDia(datos);
 plot((1:365),pagos(:,1),'.-r;Efectivo;',(1:365),pagos(:,2),'.-b;Telepase;');
-xlabel("Días de 2019");
-ylabel("Pagos");
+imprimirGraficoPorDias(fig, "Forma de pago por día del año.", "Pagos", "itemi");
 
 #------------------------------------------------------
 

@@ -356,7 +356,7 @@ function imprimirGraficoPorHora(figura, titulo, etiquetaY, nombreArchivo)
   set (gca, "yticklabel", yticklabel);
   xlabel("Horas");
   ylabel(etiquetaY);
-  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S800,500");
+  print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S800,500");
   
 endfunction
 
@@ -375,7 +375,7 @@ function imprimirRankingEstaciones(figura, titulo, nombreArchivo)
   estaciones = {"Alberti","Avellaneda","Dellepiane","Illia","Paseo del Bajo","Retiro","Salguero","Sarmiento"};
   set (gca,'xticklabel', estaciones);
   ylabel(strcat("Pasos de", titulo));
-  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S800,500");
+  print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S800,500");
   
 endfunction
 
@@ -396,7 +396,7 @@ function imprimirGraficoPorDiaSemana(figura, grafico, titulo, etiquetaY, nombreA
   set (gca,'xticklabel', diasSemana);
   ylabel(etiquetaY);
   legend(grafico,'Ingresos','Egresos');
-  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
+  print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
   
 endfunction
 
@@ -417,7 +417,7 @@ function imprimirGraficoPorMes(figura, grafico, titulo, etiquetaY, nombreArchivo
   set (gca,'xticklabel', meses);
   ylabel(etiquetaY);
   legend(grafico,'Ingresos','Egresos');
-  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
+  print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
   
 endfunction
 
@@ -437,7 +437,7 @@ function imprimirGraficoPorDias(figura, titulo, etiquetaY, nombreArchivo)
   set (gca, "yticklabel", yticklabel);
   xlabel("Días de 2019");
   ylabel(etiquetaY);
-  print(figura, strcat(nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
+  print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
   
 endfunction
 

@@ -502,7 +502,9 @@ obtenerFranjasConMayorMovilidad(acumularMovilidadPorFranja(acumularMovilidadPorH
 
 #Item e: Gráficos de rankings de pasos en estaciones para vehículos livianos y
 #pesados.
+disp('Vehículos livianos');
 rankingLivianos = rankingEstacionesPorTipoVeh(datos, 1); # 1 = Liviano
+disp('Vehículos pesados');
 rankingPesados = rankingEstacionesPorTipoVeh(datos, 2); # 2 = Pesado
 bar(1:8, rankingLivianos(:,2));
 imprimirRankingEstaciones(fig, rankingLivianos(:,1), "vehiculos livianos", "iteme1");
@@ -511,6 +513,7 @@ imprimirRankingEstaciones(fig, rankingPesados(:,1), "vehiculos pesados", "iteme2
 
 
 #Item f: Gráficos de ingresos y egresos por día de semana para cada estación.
+disp('Balances por días de semana');
 for i=1:8
   pasosEstacion = balanceEstacionPorDiaSemana(datos, i);
   barras = bar(1:7, pasosEstacion);
@@ -520,6 +523,7 @@ endfor
 
 
 #Item g: Gráficos de ingresos y egresos por mes para cada estación.
+disp('Balances por mes');
 for i=1:8
   pasosEstacion = balanceEstacionPorMes(datos, i);
   barras = bar(1:12, pasosEstacion);

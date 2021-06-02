@@ -410,42 +410,43 @@ endfunction
 
 # Imprime gráfico de ingresos/egresos por día de semana.
 # PRE: Figura a imprimir, gráfico de la figura, título del gráfico, etiqueta 
-# del eje Y y nombre del archivo a donde se guardará la imagen.
-# POST: Imprime la figura representando en un gráfico de barras los ingresos y
-# egresos correspondientes a cada día de la semana. Guarda la imagen en un archivo.
-function imprimirGraficoPorDiaSemana(figura, grafico, titulo, etiquetaY, nombreArchivo)
+# del eje Y, limite inferior, limite superior y nombre del archivo a donde se 
+# guardará la imagen.
+# POST: Imprime la figura representando en un gráfico de barras los balances
+# correspondientes a cada día de la semana. Guarda la imagen en un archivo.
+function imprimirGraficoPorDiaSemana(figura, grafico, titulo, etiquetaY, limI, limS, nombreArchivo)
   
   title(titulo);
-  grid on
-  ylim([0, 4000000]);
+  grid on  
+  ylim([limI, limS]);
   ytick = get (gca, "ytick");
   yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
   set (gca, "yticklabel", yticklabel);
   diasSemana = {"Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"};
   set (gca,'xticklabel', diasSemana);
   ylabel(etiquetaY);
-  legend(grafico,'Ingresos','Egresos');
+  legend(grafico,'Balance');
   print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
   
 endfunction
 
 # Imprime gráfico de ingresos/egresos por mes.
 # PRE: Figura a imprimir, gráfico de la figura, título del gráfico, etiqueta 
-# del eje Y y nombre del archivo a donde se guardará la imagen.
-# POST: Imprime la figura representando en un gráfico de barras los ingresos y
-# egresos correspondientes a cada mes. Guarda la imagen en un archivo.
-function imprimirGraficoPorMes(figura, grafico, titulo, etiquetaY, nombreArchivo)
+# del eje Y, limite inferior, limite superior y nombre del archivo a donde se 
+# guardará la imagen.
+# POST: Imprime la figura representando en un gráfico de barras los balances
+# correspondientes a cada mes. Guarda la imagen en un archivo.
+function imprimirGraficoPorMes(figura, grafico, titulo, etiquetaY, limI, limS, nombreArchivo)
   
   title(titulo);
   grid on
-  ylim([0, 2500000]);
+  ylim([limI, limS]);
   ytick = get (gca, "ytick");
   yticklabel = strsplit (sprintf ("%d\n", ytick), "\n", true);
   set (gca, "yticklabel", yticklabel);
   meses = {"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"};
   set (gca,'xticklabel', meses);
   ylabel(etiquetaY);
-  legend(grafico,'Ingresos','Egresos');
   print(figura, strcat("informe/", nombreArchivo, ".jpg"), "-djpg", "-S1000,500");
   
 endfunction
@@ -512,23 +513,31 @@ bar(1:8, rankingPesados(:,2));
 imprimirRankingEstaciones(fig, rankingPesados(:,1), "vehiculos pesados", "iteme2");
 
 
-#Item f: Gráficos de ingresos y egresos por día de semana para cada estación.
+#Item f: Gráficos de balances por día de semana para cada estación.
 disp('Balances por días de semana');
 for i=1:8
   pasosEstacion = balanceEstacionPorDiaSemana(datos, i);
+  barras = bar(1:7, pasosEstacion(:,1) - pasosEstacion(:,2));
+  titulo = strcat("Balances por dia en estación ", {' '}, nombreEstacion(i), ".");
+  legend(barras,'Balance');
+  imprimirGraficoPorDiaSemana(fig, barras, titulo, "Pasos", -250000, 250000, strcat("itemf",int2str(i),"a"));
   barras = bar(1:7, pasosEstacion);
-  titulo = strcat("Ingresos/egresos por dia en estación ", {' '}, nombreEstacion(i), ".");
-  imprimirGraficoPorDiaSemana(fig, barras, titulo, "Pasos", strcat("itemf",int2str(i)));
+  legend(barras, 'Ingresos', 'Egresos');
+  imprimirGraficoPorDiaSemana(fig, barras, titulo, "Pasos", 0, 4000000, strcat("itemf",int2str(i),"b"));
 endfor
 
 
-#Item g: Gráficos de ingresos y egresos por mes para cada estación.
+#Item g: Gráficos de balances por mes para cada estación.
 disp('Balances por mes');
 for i=1:8
   pasosEstacion = balanceEstacionPorMes(datos, i);
+  barras = bar(1:12, pasosEstacion(:,1) - pasosEstacion(:,2));
+  titulo = strcat("Balances por mes en estación", {' '}, nombreEstacion(i), ".");
+  legend(barras,'Balance');
+  imprimirGraficoPorMes(fig, barras, titulo, "Pasos", -175000, 175000, strcat("itemg",int2str(i),"a"));
   barras = bar(1:12, pasosEstacion);
-  titulo = strcat("Ingresos/egresos por mes en estación", {' '}, nombreEstacion(i), ".");
-  imprimirGraficoPorMes(fig, barras, titulo, "Pasos", strcat("itemg",int2str(i)));
+  legend(barras, 'Ingresos', 'Egresos');
+  imprimirGraficoPorMes(fig, barras, titulo, "Pasos", 0, 2500000, strcat("itemg",int2str(i),"b"));
 endfor
 
 
